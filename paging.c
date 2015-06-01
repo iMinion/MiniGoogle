@@ -12,9 +12,10 @@ char* content;
 int main(int argc, char *argv[]) {
 	content = get_page("check1.html");
 	printf("%s\n", content);
-	printf("%s\n", get_next_target());
+	// printf("%s\n", get_next_target());
 	char **links = get_all_links();
-	for(int i = 0; ; i++) {
+	int j = sizeof(links)/sizeof(char **);
+	for(int i = 0; links[i] != '\0'; i++) {
 		printf("%s\n", links[i]);
 	}
 	return 0;
@@ -62,12 +63,14 @@ char* get_next_target() {
 }
 
 char** get_all_links() {
-	char **links = (char **) malloc(100);
+	char **links = (char **) malloc(sizeof(char *));
 	char *link;
 	int i = 0;
 	while((link = get_next_target()) != NULL) {
+		links = realloc(links, (i + 2) * sizeof(char *));
 		links[i] = link;
 		i++;
 	}
+	links[++i] = '\0';
 	return links;
 }
