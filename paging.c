@@ -10,12 +10,12 @@ char** get_all_links();
 char* content;
 
 int main(int argc, char *argv[]) {
-	content = get_page("check1.html");
+	content = get_page("check2.html");
 	printf("%s\n", content);
-	// printf("%s\n", get_next_target());
+	printf("%s\n", get_next_target());
 	char **links = get_all_links();
-	int j = sizeof(links)/sizeof(char **);
-	for(int i = 0; links[i] != '\0'; i++) {
+	int i = 0;
+	for(i = 0; links[i] != '\0'; i++) {
 		printf("%s\n", links[i]);
 	}
 	return 0;
@@ -58,6 +58,9 @@ char* get_next_target() {
 		}
 		ptr++;
 		content = ptr;
+		if(strlen(link) <= 1) {
+			return NULL;
+		}
 		return link;
 	}
 }
@@ -71,6 +74,6 @@ char** get_all_links() {
 		links[i] = link;
 		i++;
 	}
-	links[++i] = '\0';
+	links[i] = '\0';
 	return links;
 }
