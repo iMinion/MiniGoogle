@@ -5,6 +5,7 @@
 
 char* get_page(char *loc);
 char* get_next_target();
+char** get_all_links();
 
 char* content;
 
@@ -12,7 +13,10 @@ int main(int argc, char *argv[]) {
 	content = get_page("check1.html");
 	printf("%s\n", content);
 	printf("%s\n", get_next_target());
-	printf("%s\n", content);
+	char **links = get_all_links();
+	for(int i = 0; ; i++) {
+		printf("%s\n", links[i]);
+	}
 	return 0;
 }
 
@@ -42,15 +46,28 @@ char* get_next_target() {
 		ptr = index(ptr, '\"');
 		ptr++;
 		link = (char *) malloc(1);
+		link[0] = '\0';
+		int i = 0;
 		while(ptr[0] != '\"') {
 			int pre = strlen(link);
 			link = realloc(link, strlen(link) + 2);
 			link[pre] = ptr[0];
+			link[pre + 1] = '\0';
 			ptr++;
 		}
-		printf("Hello\n");
 		ptr++;
 		content = ptr;
 		return link;
 	}
+}
+
+char** get_all_links() {
+	char **links = (char **) malloc(100);
+	char *link;
+	int i = 0;
+	while((link = get_next_target()) != NULL) {
+		links[i] = link;
+		i++;
+	}
+	return links;
 }
