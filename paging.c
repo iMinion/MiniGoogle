@@ -8,6 +8,7 @@ char* get_next_target(char **);
 char** get_all_links(char **);
 void crawl_web(char *);
 int contains(char ***, char *);
+int size(char ***);
 
 
 int main(int argc, char *argv[]) {
@@ -78,7 +79,9 @@ char** get_all_links(char **content) {
 }
 
 void crawl_web(char *seedurl) {
-
+	char **visited = (char **) malloc(sizeof(char *) * 11);
+	int sizev = 10;
+	char **
 }
 
 int contains(char ***visited, char *tbf) {
@@ -89,4 +92,13 @@ int contains(char ***visited, char *tbf) {
 			return 1;
 	}
 	return 0;
+}
+
+int size(char ***array) {
+	int i = 0;
+	char **vis = *array;
+	while(vis[i] != '\0') {
+		i++;
+	}
+	return i != 0? i++: i;
 }
