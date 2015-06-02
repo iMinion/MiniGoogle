@@ -4,16 +4,14 @@
 #include <strings.h>
 
 char* get_page(char *loc);
-char* get_next_target();
-char** get_all_links();
-
-char* content;
+char* get_next_target(char *content);
+char** get_all_links(char *content);
 
 int main(int argc, char *argv[]) {
-	content = get_page("check2.html");
+	char *content = get_page("check1.html");
 	printf("%s\n", content);
-	printf("%s\n", get_next_target());
-	char **links = get_all_links();
+	printf("%s\n", get_next_target(content));
+	char **links = get_all_links(get_page("check1.html"));
 	int i = 0;
 	for(i = 0; links[i] != '\0'; i++) {
 		printf("%s\n", links[i]);
@@ -33,7 +31,7 @@ char* get_page(char *loc) {
 	return page;
 }
 
-char* get_next_target() {
+char* get_next_target(char *content) {
 	char *link;
 	char *ref;
 	ref = (char *) malloc(1);
@@ -61,15 +59,16 @@ char* get_next_target() {
 		if(strlen(link) <= 1) {
 			return NULL;
 		}
+		printf("%s\n", content);
 		return link;
 	}
 }
 
-char** get_all_links() {
+char** get_all_links(char *content) {
 	char **links = (char **) malloc(sizeof(char *));
 	char *link;
 	int i = 0;
-	while((link = get_next_target()) != NULL) {
+	while((link = get_next_target(content)) != NULL) {
 		links = realloc(links, (i + 2) * sizeof(char *));
 		links[i] = link;
 		i++;
