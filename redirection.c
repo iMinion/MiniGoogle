@@ -5,31 +5,13 @@
 
 char* get_page(char *loc);
 char* get_next_target(char **);
-char** get_all_links(char **);
 
 int main(int argc, char *argv[]) {
 	char *content = get_page("check1.html");
 	printf("%s\n", content);
 	printf("%s\n", get_next_target(&content));
 	printf("%s\n", content);
-	char **links = get_all_links(get_page("check1.html"));
-	int i = 0;
-	for(i = 0; links[i] != '\0'; i++) {
-		printf("%s\n", links[i]);
-	}
 	return 0;
-}
-
-char* get_page(char *loc) {
-	char *page;
-	page = (char *) malloc(1024 * sizeof(char));
-	FILE *fp = fopen(loc, "r");
-	char buffer[1024];
-	while(fgets(buffer, 1024, fp) != NULL) {
-		page = realloc(page, strlen(page) + 1 + 1024);
-		strcat(page, buffer);
-	}
-	return page;
 }
 
 char* get_next_target(char **content) {
@@ -62,17 +44,14 @@ char* get_next_target(char **content) {
 	}
 }
 
-char** get_all_links(char **content) {
-	char **links = (char **) malloc(sizeof(char *));
-	char *link;
-	int i = 0;
-	while((link = get_next_target(&content)) != NULL) {
-		links = realloc(links, (i + 2) * sizeof(char *));
-		links[i] = link;
-		i++;
-		printf("In all links\n");
-		printf("%s\n", content);
+char* get_page(char *loc) {
+	char *page;
+	page = (char *) malloc(1024 * sizeof(char));
+	FILE *fp = fopen(loc, "r");
+	char buffer[1024];
+	while(fgets(buffer, 1024, fp) != NULL) {
+		page = realloc(page, strlen(page) + 1 + 1024);
+		strcat(page, buffer);
 	}
-	links[i] = '\0';
-	return links;
+	return page;
 }
