@@ -11,6 +11,8 @@ int contains(char ***, char *);
 int size(char ***);
 
 
+
+
 int main(int argc, char *argv[]) {
 	char *content = get_page("bing.html");
 	char **links = get_all_links(&content);
@@ -109,9 +111,11 @@ void crawl_web(char *seedurl) {
 					if(links != NULL) {
 						int k = 0;
 						while(links[k][0] != '\0') {
-							if(contains(&visited, links[k]) == 0 && index(links[k], '#') == NULL) {
+							if(contains(&visited, links[k]) == 0 
+								&& index(links[k], '#') == NULL) {
 								sizepq = size(&processqueue);
-								processqueue = realloc(processqueue, (sizepq + 2) * sizeof(char *));
+								processqueue = realloc(processqueue, 
+												(sizepq + 2) * sizeof(char *));
 								processqueue[sizepq] = (char *) malloc(1);
 								strcpy(processqueue[sizepq], links[k]);
 								processqueue[sizepq + 1] = (char *)malloc(1);
@@ -130,7 +134,8 @@ void crawl_web(char *seedurl) {
 		int l = 0;
 		sizepq = size(&processqueue);
 		while(l < sizepq) {
-			queue[l] = (char *) malloc((strlen(processqueue[l]) + 1) * sizeof(char));
+			queue[l] = 
+				(char *) malloc((strlen(processqueue[l]) + 1) * sizeof(char));
 			strcpy(queue[l], processqueue[l]);
 			l++;
 		}
