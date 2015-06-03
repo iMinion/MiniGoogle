@@ -18,6 +18,7 @@ int main(int argc, char *argv[]) {
 	for(i = 0; links[i] != '\0'; i++) {
 		printf("%s\n", links[i]);
 	}
+	crawl_web("bing.html");
 	return 0;
 }
 
@@ -58,8 +59,8 @@ char* get_next_target(char **content) {
 			i++;
 		}
 		link[i] = '\0';
-		ptr = index(ptr, '\"');
-		ptr++;
+		ptr = index(ptr, '</a>');
+		ptr += 4;
 		*content = ptr;
 		return link;
 	}
@@ -74,20 +75,73 @@ char** get_all_links(char **content) {
 		links[i] = link;
 		i++;
 	}
-	links[i] = '\0';
+	links[i] = (char *) malloc(1);
+	links[i][0] = '\0';
 	return links;
 }
 
 void crawl_web(char *seedurl) {
 	char **visited = (char **) malloc(sizeof(char *) * 11);
-	int sizev = 10;
-	char **
+	char **queue = (char **) malloc(sizeof(char *) * 11);
+	char **processqueue = (char **) malloc(sizeof(char *) * 11);
+	int sizev, sizeq, sizepq = 10;
+	queue[0] = seedurl;
+	queue[1] = (char *)malloc(1);
+	queue[1][0] = '\0';
+	visited[0] = (char *) malloc(1);
+	visited[0][0] = '\0';
+	processqueue[0] = (char *)malloc(1);
+	processqueue[0][0] = '\0';
+	while(queue[0][0] != '\0') {
+		int i = 0;
+		int j = 1;
+		while(queue[i][0] != '\0') {
+			char *content = get_page(queue[i]);
+			if(content != NULL) {
+				sizev = size(&visited);
+				visited = realloc(visited, (sizev + 2) * sizeof(char *));
+				visited[sizev] = (char *)malloc(1);
+				strcpy(visited[sizev], queue[i]);
+				visited[sizev + 1] = (char *)malloc(1);
+				visited[sizev + 1][0] = '\0';
+				char **links = get_all_links(&content);
+				if(links != NULL) {
+					int k = 0;
+					while(links[k][0] != '\0') {
+						if(contains(&visited, links[k]) != 1 && index(links[k], '#') == NULL) {
+							sizepq = size(&processqueue);
+							processqueue = realloc(processqueue, (sizepq + 2) * sizeof(char *));
+							processqueue[sizepq] = (char *) malloc(1);
+							strcpy(processqueue[sizepq], links[k]);
+							processqueue[sizepq + 1] = (char *)malloc(1);
+							processqueue[sizepq + 1][0] = '\0';
+						}
+					}
+				}
+			}
+			i++;
+		}
+		queue = (char **)malloc(size(&processqueue) * sizeof(char *));
+		i = 0;
+		while(processqueue[i][0] != '\0') {
+			queue[i] = (char *) malloc((strlen(processqueue[i]) + 1) * sizeof(char));
+			strcpy(queue[i], processqueue[i]);
+			i++;
+		}
+		processqueue = (char **)malloc(sizeof(char *));
+		processqueue[0] = (char *) malloc(1);
+		processqueue[0][1] = '\0';
+	}
+	int i = 0;
+	while(visited[i][0] != '\0') {
+		printf("%s\n", visited[i]);
+	}
 }
 
 int contains(char ***visited, char *tbf) {
 	int i = 0;
 	char **vis = *visited;
-	while(vis[i] != '\0') {
+	while(vis[i][0] != '\0') {
 		if(strcmp(vis[i], tbf) == 0) 
 			return 1;
 	}
@@ -97,8 +151,8 @@ int contains(char ***visited, char *tbf) {
 int size(char ***array) {
 	int i = 0;
 	char **vis = *array;
-	while(vis[i] != '\0') {
-		i++;
+	while(vis[i][0] != '\0') {
+		++i;
 	}
-	return i != 0? i++: i;
+	return i;
 }
