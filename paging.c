@@ -22,13 +22,13 @@ char stopwords[853][20] = {"'ll","'ve","a","a's","able","about","above","abroad"
 
 
 int main(int argc, char *argv[]) {
-	char *content = get_page("webpages/bing.html");
+	char *content = get_page("bing.html");
 	// char **links = get_all_links(&content);
 	int i = 0;
 	// for(i = 0; links[i][0] != '\0'; i++) {
 		// printf("%s\n", links[i]);
 	// }
-	crawl_web("webpages/bing.html");
+	crawl_web("bing.html");
 	char **keywords = getkeywords(content);
 	i = 0;
 	printf("%d\n", size(&keywords));
@@ -233,19 +233,21 @@ char ** get_words(char * str) {
 	int i = 0;
 	char * word = (char *) malloc(1);
 	while(i < len) {
-		if(str[i] != ' ' || str[i] != '\t' || str[i] != '\n' || str[i] != '\r') {
+		if(str[i] != ' ' && str[i] != '\t' && str[i] != '\n' && str[i] != '\r') {
 			word = realloc(word, strlen(word) + 2);
 			word[strlen(word)] = str[i];
 			word[strlen(word) + 1] = '\0';
 		}
 		else {
 			int siz = size(&words);
-			words = realloc(words, (siz + 2) * sizeof(char *));
-			words[siz] = (char *) malloc(1);
-			strcpy(words[siz], word);
-			words[siz + 1] = (char *) malloc(1);
-			words[siz + 1][0] = '\0';
-			word[0] = '\0';
+			if(strlen(word) > 0) {
+				words = realloc(words, (siz + 2) * sizeof(char *));
+				words[siz] = (char *) malloc(1);
+				strcpy(words[siz], word);
+				words[siz + 1] = (char *) malloc(1);
+				words[siz + 1][0] = '\0';
+				word[0] = '\0';
+			}
 		}
 		i++;
 	}
