@@ -14,6 +14,7 @@ int contains(char ***, char *);
 int size(char ***);
 char** getkeywords(char *);
 int isstopword(char *);
+char** get_words(char *);
 
 
 
@@ -24,12 +25,14 @@ int main(int argc, char *argv[]) {
 	char *content = get_page("webpages/bing.html");
 	// char **links = get_all_links(&content);
 	int i = 0;
-	for(i = 0; links[i][0] != '\0'; i++) {
+	// for(i = 0; links[i][0] != '\0'; i++) {
 		// printf("%s\n", links[i]);
-	}
+	// }
 	// crawl_web("webpages/bing.html");
 	char **keywords = getkeywords(content);
-	for(int i = 0; i < size(keywords); i++) {
+	i = 0;
+	printf("%d\n", size(&keywords));
+	for(i = 0; i < size(&keywords); i++) {
 		printf("%s\n", keywords[i]);
 	}
 
@@ -194,40 +197,75 @@ char** getkeywords(char *page) {
 	keywords[0][0] = '\0';
 	while(page != NULL) {
 		char * lptr = index(page, '>');
-		char * rptr = index(page, '<');
-		lptr++;
+		char * rptr = index(lptr++, '<');
 		char *word = (char *) malloc(1);
 		word[0] = '\0';
-		while(lptr != rptr) {
-			if(lptr[0] != ' ' || lptr[0] != '\t' || lptr[0] != '\n' || lptr[0] != '\r') {
-				word = realloc(strlen(word) + 2);
-				word[strlen(word)] = lptr[0];
-				word[strlen(word) + 1] = '\0';
-			}
-			else {
-				if(isstopword(word) == 0)  {
-					int siz = size(&keywords);
-					keywords = realloc((size + 2) * sizeof(char *));
-					keywords[siz] = word;
-					keywords[siz + 1] = (char *) malloc(1);
-					keywords[siz + 1][0] = '\0';
+		char * str;
+		if(rptr != NULL) {
+			str = (char *) malloc(sizeof(char) * (rptr -lptr + 1));
+			strncpy(str, lptr, rptr - lptr);
+			char ** words = get_words(str);
+			int siz = size(&words);
+			int i = 0;
+			while(i < siz) {
+				word = words[i];
+				if(isstopword(word) == 0) {
+					int si = size(&keywords);
+					keywords = realloc(keywords, (si + 2) * sizeof(char *));
+					keywords[si] = (char *)malloc(strlen(word) + 1);
+					strcpy(keywords[si], word);
+					keywords[si + 1] = (char *)malloc(1);
+					keywords[si + 1][0] = '\0';
 				}
-				word = NULL;
-				word = (char *) malloc(1);
-				word[0] = '\0';
+				i++;
 			}
-			lptr++;
 		}
-		page = ++rptr;
+		page = rptr;
 	}
 	return keywords;
 }
 
+char ** get_words(char * str) {
+	char ** words = (char **) malloc(sizeof(char *));
+	words[0] = (char *) malloc(1);
+	words[0][0] = '\0';
+	int len = strlen(str);
+	int i = 0;
+	char * word = (char *) malloc(1);
+	while(i < len) {
+		if(str[i] != ' ' || str[i] != '\t' || str[i] != '\n' || str[i] != '\r') {
+			word = realloc(word, strlen(word) + 2);
+			word[strlen(word)] = str[i];
+			word[strlen(word) + 1] = '\0';
+		}
+		else {
+			int siz = size(&words);
+			words = realloc(words, (siz + 2) * sizeof(char *));
+			words[siz] = (char *) malloc(1);
+			strcpy(words[siz], word);
+			words[siz + 1] = (char *) malloc(1);
+			words[siz + 1][0] = '\0';
+			word[0] = '\0';
+		}
+		i++;
+	}
+	if(strlen(word) != 0) {
+		int siz = size(&words);
+		words = realloc(words, (siz + 2) * sizeof(char *));
+		words[siz] = (char *) malloc(1);
+		strcpy(words[siz], word);
+		words[siz + 1] = (char *) malloc(1);
+		words[siz + 1][0] = '\0';
+	}
+	return words;
+}
+
+
 int isstopword(char *word) {
 	int l = 0;
-	int h = 853;
+	int h = 852;
 	while(l <= h) {
-		m = (l + h)/2;
+		int m = (l + h)/2;
 		int comp = strcmp(word, stopwords[m]);
 		if(comp == 0) return 1;
 		else if(comp < 0) {
