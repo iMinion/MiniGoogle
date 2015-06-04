@@ -28,7 +28,7 @@ int main(int argc, char *argv[]) {
 	// for(i = 0; links[i][0] != '\0'; i++) {
 		// printf("%s\n", links[i]);
 	// }
-	// crawl_web("webpages/bing.html");
+	crawl_web("webpages/bing.html");
 	char **keywords = getkeywords(content);
 	i = 0;
 	printf("%d\n", size(&keywords));
