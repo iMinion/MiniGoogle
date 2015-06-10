@@ -298,7 +298,7 @@ void add_page_to_index(char *location) {
 	int i = 0;
 	int words = size(&keywords);
 	while(i < words) {
-		int j = 0
+		int j = 0;
 		while(j < s) {
 			if(strcmp(keywords[i], ds[j]->keyword) == 0) {
 				add_to_index(keywords[i], location, j);
