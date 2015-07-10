@@ -25,7 +25,7 @@ typedef struct map {
 
 typedef struct index {
 	char *keyword;
-	Map *maps;
+	Map **maps;
 }indextable;
 
 indextable **ds = NULL;
@@ -319,12 +319,12 @@ void add_page_to_index(char *location) {
 
 void add_to_index(char * word, char * loc, int j) {
 	int i = 0;
-	Map *map = ds[j]->maps;
+	Map **map = ds[j]->maps;
 	if(map != NULL) {
 		int s = sizeof(map);
 		while(i < s) {
-			if(strcmp(map[s]->url, location) == 0) {
-				++map[s]->count;
+			if(strcmp(map[i]->url, loc) == 0) {
+				++map[i]->count;
 				ds[j]->maps = map;
 				return;
 			}
